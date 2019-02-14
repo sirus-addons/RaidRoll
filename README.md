@@ -1,0 +1,2 @@
+# Raid Roll
+Raid Roll is an addon that can be used to perform a raid roll. A raid roll lists all players with an ID beside their name. Then it performs a roll and announces who the winner is (based on the ID). You can also track rolls made by players on any loot that drops. This function supports the EPGP system of distributing loot. The addon also contains a loot tracker which can be used to announce or monitor loot that has dropped.
