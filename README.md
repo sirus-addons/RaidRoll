@@ -1,2 +1,3 @@
-# Raid Roll
-Raid Roll is an addon that can be used to perform a raid roll. A raid roll lists all players with an ID beside their name. Then it performs a roll and announces who the winner is (based on the ID). You can also track rolls made by players on any loot that drops. This function supports the EPGP system of distributing loot. The addon also contains a loot tracker which can be used to announce or monitor loot that has dropped.
+**RaidRoll** - это модификация, которую можно использовать для распределения добычи в рейде. В списке перечислены все игроки с идентификатором рядом с их именем. Затем он выполняет бросок и объявляет, кто является победителем (на основании идентификатора). Вы также можете отслеживать броски, сделанные игроками на любой выпавшей добыче. Эта функция поддерживает систему распределения добычи EPGP. Аддон также содержит трекер лута, который можно использовать для объявления или отслеживания выпавшего лута.
+
+*Спасибо игроку [Os](https://forum.sirus.su/members/17os86.175882/) за перевод описания на Русский Язык.*
