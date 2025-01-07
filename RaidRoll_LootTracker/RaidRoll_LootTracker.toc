@@ -2,11 +2,7 @@
 ## X-Compatible-With: 40000
 ## Title: Raid Roll - Loot Tracker
 ## Author: Musou
-## Notes: |@Version: 2@|Shows a window containing boss loots. Also has customizable messages for distributing loot. (~50 k B)
-## email: killerpet@gmail.com
+## Notes: |@Version: 3@|Shows a window containing boss loots. Also has customizable messages for distributing loot. (~50 k B)
 ## Dependencies: RaidRoll
 
-
 RaidRoll_LootTracker.lua
-
-
