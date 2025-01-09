@@ -130,9 +130,9 @@ function RR_ReallyGetEPGPCharacterData(character)
 					
 					if tonumber(EP) == nil then EP = 0 end
 					if tonumber(GP) == nil then GP = 0 end
-					
+
 					GP = GP + RaidRoll_DB["BASE_GP"]
-					PR = (ceil(EP/GP*100) / 100)
+					PR = (ceil(EP / GP * 100) / 100)
 					if EP >= RaidRoll_DB["MIN_EP"] then AboveThreshold = true end
 					if RaidRoll_DB["debug"] == true then RR_Test(name .. ": EP=" .. EP .. " GP=" .. GP .. " PR=" .. PR) end
 				end
