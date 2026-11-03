@@ -2,4 +2,4 @@ name: RaidRoll
 description: README.md
 version: 3
 category: 14
-directories: ["RaidRoll"]
+directories: ["RaidRoll", "RaidRoll_EPGP", "RaidRoll_LootTracker"]
