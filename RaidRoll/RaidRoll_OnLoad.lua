@@ -156,7 +156,7 @@ function RR_SendItemInfo()
 							ItemId = tonumber(ItemId)
 							
 							local _, _, _, ItemLvl = GetItemInfo(ItemId)
-							ItemLvl = tonumber(ItemLvl)
+							ItemLvl = tonumber(ItemLvl) or 0
 							
 						-- Special rare items that should be included
 							if 	ItemId == 	46110 	or		-- Alchemist's Cache
@@ -201,7 +201,15 @@ function RR_SendItemInfo()
 								ZoneName == "The Eye of Eternity" or
 								ZoneName == "The Obsidian Sanctum" or
 								ZoneName == "Ulduar" or
-								ZoneName == "Vault of Archavon" then
+								ZoneName == "Vault of Archavon" or
+								ZoneName == "Испытание крестоносца" or
+								ZoneName == "Цитадель Ледяной Короны" or
+								ZoneName == "Наксрамас" or
+								ZoneName == "Логово Ониксии" or
+								ZoneName == "Око Вечности" or
+								ZoneName == "Обсидиановое святилище" or
+								ZoneName == "Ульдуар" or
+								ZoneName == "Склеп Аркавона" then
 									AcceptableZone = true
 									if RaidRoll_DB["debug"] == true then RR_Test("This is an acceptable Zone - " .. ZoneName) end
 							else
@@ -718,7 +726,7 @@ function RaidRoll_Event(self, event, ...)
 					if string.find(arg1, "%-") ~= nil then
 						local Name, Roll, Low, High = RR_RollHandler(arg1)
 						
-						if Name ~= nil then 
+						if Name ~= nil and Roll ~= nil and Low ~= nil and High ~= nil then
 							RR_ARollHasOccured(Name, Roll, Low, High)
 						end
 					end
@@ -733,7 +741,7 @@ function RaidRoll_Event(self, event, ...)
 
 							local Name, Roll, Low, High = RR_RollHandler(arg1)
 						
-							if Name ~= nil then 
+							if Name ~= nil and Roll ~= nil and Low ~= nil and High ~= nil then
 								RR_ARollHasOccured(Name, Roll, Low, High)
 							end
 						end
@@ -850,7 +858,7 @@ function RR_ARollHasOccured(Name, Roll, Low, High)
 	end
 end
 
-function RR_FindRollNumbers(msg)
+function RR_FindRollNumbers(msg, Start, Mid, End)
 	local Roll, Low, High
 
 	Low = tonumber(string.sub(msg, Start + 1, Mid - 1))
@@ -903,6 +911,7 @@ function RR_FindName(msg)
 end
 
 function RR_RollHandler(msg)
+	local Start, End, Mid
 	local Name, Roll, Low, High
 	
 	-- musou rolls 99 (1-100)
@@ -919,7 +928,7 @@ function RR_RollHandler(msg)
 					
 					if Start < End  and Start < Mid and Mid < End then
 						
-						Roll, Low, High = RR_FindRollNumbers(msg)
+						Roll, Low, High = RR_FindRollNumbers(msg, Start, Mid, End)
 						Name = RR_FindName(msg)
 						
 						if RaidRoll_DB["debug"] == true then 
@@ -948,7 +957,7 @@ function RR_RollHandler(msg)
 										
 						if Start < End  and Start < Mid and Mid < End then
 						
-							Roll, Low, High = RR_FindRollNumbers(msg)
+							Roll, Low, High = RR_FindRollNumbers(msg, Start, Mid, End)
 							Name = RR_FindName(msg)
 						
 							if RaidRoll_DB["debug"] == true then 
@@ -1091,7 +1100,7 @@ function rr_RollSort(rr_rollID, PlayerRoll, PlayerName, rr_AddedPlayer, rr_First
 					local name, guid, locClass, locRace, engClass, engRace, gender
 					if (GetLocale() == "zhCN") then
 						name = UnitName("party" .. i)
-						_, engClass =  UnitClass("party" .. i)
+						engClass = select(2, UnitClass("party" .. i))
 					else
 						if i == 1 then 
 							name = UnitName("player")
@@ -1852,7 +1861,7 @@ function RR_Command(cmd)
 	end
 	
 	if cmd_s == "help" then
-		for i = 1, 13 do
+		for i = 1, 22 do
             if RAIDROLL_LOCALE["HELP" .. i] then
 				RR_Test(RAIDROLL_LOCALE["HELP" .. i])
 			end
@@ -1944,8 +1953,8 @@ function RR_Command(cmd)
 	
 	local cmd1, cmd2, cmd3 = strsplit(" ", cmd_s, 3)
 	
-	if cmd1 == "mark" then
-		if cmd2 ~= nil and cmd2 ~= "!reset" then
+	if cmd1 == "mark" and cmd2 ~= "!reset" then
+		if cmd2 ~= nil and cmd2 ~= "" then
 			local name = "Nobody was"
 			if tonumber(cmd2) == nil then
 				name = cmd2
@@ -1956,7 +1965,7 @@ function RR_Command(cmd)
 				end
 				RR_Test(name .. " " .. RAIDROLL_LOCALE["added_to_marking_list"])
 			else
-				if RollerName[rr_CurrentRollID][tonumber(cmd2)] ~= nil then
+				if RollerName[rr_CurrentRollID][tonumber(cmd2)] ~= nil and RollerName[rr_CurrentRollID][tonumber(cmd2)] ~= "" then
 					name = strlower(RollerName[rr_CurrentRollID][tonumber(cmd2)])
 					
 					if RaidRoll_DBPC[UnitName("player")]["RR_NameMark"] == nil then RaidRoll_DBPC[UnitName("player")]["RR_NameMark"] = {} end
@@ -1980,19 +1989,27 @@ function RR_Command(cmd)
 				end
 			end
 		end
+		if RR_RollFrame:IsShown() then
+			RR_Display(rr_CurrentRollID)
+		end
 		return
 	end
 	
 	if cmd1 == "unmark" then
-		if cmd2 ~= nil and cmd2 ~= "!reset" then
-			if tonumber(cmd2) == nil then
-				RaidRoll_DBPC[UnitName("player")]["RR_NameMark"][cmd2] = false
-			else
-				local name = strlower(RollerName[rr_CurrentRollID][tonumber(cmd2)])
-				RaidRoll_DBPC[UnitName("player")]["RR_NameMark"][name] = false
+		if cmd2 ~= nil and cmd2 ~= "" and cmd2 ~= "!reset" then
+			local name = cmd2
+			if tonumber(cmd2) ~= nil then
+				name = RollerName[rr_CurrentRollID][tonumber(cmd2)]
+				if name ~= nil then name = strlower(name) end
 			end
+			if name ~= nil then
+				RaidRoll_DBPC[UnitName("player")]["RR_NameMark"][name] = false
 			
-			RR_Test(name .. " " .. RAIDROLL_LOCALE["removed_from_marking_list"])
+				RR_Test(name .. " " .. RAIDROLL_LOCALE["removed_from_marking_list"])
+			end
+		end
+		if RR_RollFrame:IsShown() then
+			RR_Display(rr_CurrentRollID)
 		end
 		return
 	end
@@ -2000,6 +2017,9 @@ function RR_Command(cmd)
 	if cmd1 == "mark" and cmd2 == "!reset" then
 		RaidRoll_DBPC[UnitName("player")]["RR_NameMark"] = {}
 		RR_Test(RAIDROLL_LOCALE["Marking_list_cleared"])
+		if RR_RollFrame:IsShown() then
+			RR_Display(rr_CurrentRollID)
+		end
 		return
 	end
 	
@@ -2026,8 +2046,8 @@ if RaidRoll_DB["debug"] == true then if cmd == "" then RR_Test("Standard Raid Ro
 	
 
 --Find the start and end location of the item link
-	RR_Start_Loc,_ = string.find(cmd, "item:");
-	_,RR_End_Loc = string.find(cmd, "|h|r")
+	RR_Start_Loc = string.find(cmd, "item:");
+	RR_End_Loc = select(2, string.find(cmd, "|h|r"))
 	
 --Cut the itemlink out of the string
 	if RR_Start_Loc ~= nil and RR_End_Loc ~= nil then
@@ -2465,6 +2485,9 @@ function RR_SetupVariables()
 	if RaidRoll_DB == nil then RaidRoll_DB = {} end
 	if RaidRoll_DBPC == nil then RaidRoll_DBPC = {} end
 	if RaidRoll_DBPC[UnitName("player")] == nil then RaidRoll_DBPC[UnitName("player")] = {} end
+	if RaidRoll_DBPC[UnitName("player")]["RR_NameMark"] == nil then RaidRoll_DBPC[UnitName("player")]["RR_NameMark"] = {} end
+	if RaidRoll_DBPC[UnitName("player")]["RR_PlayerIconID"] == nil then RaidRoll_DBPC[UnitName("player")]["RR_PlayerIconID"] = {} end
+	if RaidRoll_DBPC[UnitName("player")]["RR_PlayerIcon"] == nil then RaidRoll_DBPC[UnitName("player")]["RR_PlayerIcon"] = {} end
 	
 	--[[
 	if RaidRoll_DBPC[UnitName("player")]["RR_Accept_All_Rolls"] == nil then RaidRoll_DBPC[UnitName("player")][""] = RR_Accept_All_Rolls end
@@ -2739,7 +2762,7 @@ function RR_GetClassColor(Class)
 		Green = RAID_CLASS_COLORS[Class].g
 		Blue = RAID_CLASS_COLORS[Class].b
 		
-		ClassColor = "|c" .. string.format("%2x%2x%2x%2x", 255, Red * 255, Green * 255, Blue * 255)
+		ClassColor = "|c" .. string.format("%02x%02x%02x%02x", 255, Red * 255, Green * 255, Blue * 255)
 	end
 
 	return ClassColor

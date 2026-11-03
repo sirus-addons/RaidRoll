@@ -90,7 +90,7 @@ function RR_ReallyGetEPGPCharacterData(character)
 			character = string.lower(character)
 			
 			for i=1,GetNumGuildMembers() do
-				name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i);
+				local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i);
 				
 				name = string.lower(name)
 				
@@ -114,7 +114,7 @@ function RR_ReallyGetEPGPCharacterData(character)
 							character = officernote
 							
 							for j=1,GetNumGuildMembers() do
-								name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(j);
+								local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(j);
 								
 								if strlower(character) == strlower(name) then
 									officernote = strtrim(officernote)	-- cut out [space][tab][return][newline]

@@ -724,7 +724,7 @@ function RR_ReallyGiveLoot(player, slot)
 
 	if RaidRoll_DB["debug2"] == true then RR_Test("Giving " .. player .. " the loot in slot " .. slot) end
 
-	FoundPlayer = false
+	local FoundPlayer = false
 	
 	for i = 1, 40 do
 		if GetMasterLootCandidate(i) ~= nil then

@@ -12,7 +12,7 @@ function Setup_RR_Panel()
  
  
     RaidRoll_PriorityPanel = {}
-    RaidRoll_PriorityPanel = CreateFrame("Frame", "Raid Roll Loot Panel", UIParent)
+    RaidRoll_PriorityPanel = CreateFrame("Frame", "Raid Roll Priority Panel", UIParent)
     -- Register in the Interface Addon Options GUI
     -- Set the name for the Category for the Options Panel
     RaidRoll_PriorityPanel.name = "Priority"
@@ -487,9 +487,9 @@ function Setup_RR_Panel()
  
     RaidRoll_ExtraWidth_Slider:SetScript("OnValueChanged", function(self, value)
         value = self:GetValue()
-        RaidRoll_CheckButton_Update_Panel()
-        _G[self:GetName() .. 'Text']:SetText(value)
         RaidRoll_DBPC[UnitName("player")]["RR_ExtraWidth"] = value
+        _G[self:GetName() .. 'Text']:SetText(value)
+        RaidRoll_CheckButton_Update_Panel()
     end)
 
     ----------------------------------------------------
